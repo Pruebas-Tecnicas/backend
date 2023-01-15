@@ -17,25 +17,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bim.entity.Usuario;
-import com.bim.service.IUsuarioService;
+import com.bim.service.IFormularioService;
 
+import dto.Formulario;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/usuario")
-public class UsuarioController {
+@RequestMapping("/api/formulario")
+public class FormularioController {
 
 	@Autowired
-	private IUsuarioService service;
+	private IFormularioService service;
 	
-	@PostMapping("/registrar")
-	public ResponseEntity<?> registrarUsuario(@Valid @RequestBody Usuario usuario, BindingResult result) {
+	@PostMapping("/guardar")
+	public ResponseEntity<?> insertarFormulario(@Valid @RequestBody Formulario formulario, BindingResult result) {
 
-		Usuario usuarioNuevo;
+		Formulario captura;
 		Map<String, Object> response = new HashMap<>();
 		
-		// Validar si hay errores de parte de las anotaciones de validación de la clase Entity
+		// Validar si hay errores de parte de las anotaciones de validación
 		if (result.hasErrors()) {
 
 			List<String> errors = new ArrayList<>();
@@ -48,20 +48,20 @@ public class UsuarioController {
 
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 		}
-
+		
 		// Validar si ocurre un error al insertar los datos en la bade de datos
 		try {
-			usuarioNuevo = service.save(usuario);
+			captura = service.save(formulario);
 		} catch (DataAccessException e) {
-			response.put("mensaje", "Error al registrar el usuario");
+			response.put("mensaje", "Error al guardar los datos");
 			response.put("error", Objects.requireNonNull(e.getMessage()).concat(" : ").concat(e.getMostSpecificCause().getMessage()));
 
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		response.put("mensaje", "El usuario ha sido registrado con éxito");
-		response.put("usuario", usuarioNuevo);
-
+		response.put("mensaje", "Los datos han sido guardados con éxito");
+		response.put("captura", captura);
+		
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
 	
