@@ -16,6 +16,9 @@ public class UsuarioService implements IUsuarioService {
 	@Override
 	@Transactional
 	public Usuario save(Usuario usuario) {
+		usuario.setUsername(usuario.getUsername().toLowerCase().trim());
+		usuario.setEmail(usuario.getEmail().toLowerCase().trim());
+		
 		return dao.save(usuario);
 	}
 	

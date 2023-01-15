@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import com.bim.service.IUsuarioService;
 
 import jakarta.validation.Valid;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/usuario")
 public class UsuarioController {
@@ -53,8 +55,18 @@ public class UsuarioController {
 		try {
 			usuarioNuevo = service.save(usuario);
 		} catch (DataAccessException e) {
+			String motivo = Objects.requireNonNull(e.getMessage()).concat(" : ").concat(e.getMostSpecificCause().getMessage());
+			
+			if (motivo.contains("UQ_usuarios_usuario")) {
+				motivo = "El nombre de usuario ingresado no está disponible, debe elegir otro.";
+			} else if (motivo.contains("UQ_usuarios_email")) {
+				motivo = "El correo electrónico ingresado no está disponible, debe elegir otro.";
+			} else {
+				motivo = "Por favor notifique al administrador.";
+			}
+			
 			response.put("mensaje", "Error al registrar el usuario");
-			response.put("error", Objects.requireNonNull(e.getMessage()).concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			response.put("error", motivo);
 
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
