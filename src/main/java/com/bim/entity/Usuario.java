@@ -31,6 +31,9 @@ public class Usuario {
 	@Size(min = 8, max = 60, message = "La contraseña debe contener entre 8 y 60 caracteres.")
 	@Column(name = "contrasena")
 	private String password;
+	
+	@Column(name = "token")
+	private String token;
 
 	public Short getId() {
 		return id;
@@ -62,5 +65,13 @@ public class Usuario {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 }

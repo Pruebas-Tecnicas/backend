@@ -51,7 +51,7 @@ public class FormularioController {
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 		}
 		
-		// Validar si ocurre un error al insertar los datos en la bade de datos
+		// Validar si ocurre un error al crear el token
 		try {
 			captura = service.save(formulario);
 		} catch (DataAccessException e) {

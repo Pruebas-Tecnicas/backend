@@ -76,5 +76,4 @@ public class UsuarioController {
 
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
-	
 }
