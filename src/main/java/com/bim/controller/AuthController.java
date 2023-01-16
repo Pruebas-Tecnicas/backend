@@ -56,4 +56,37 @@ public class AuthController {
 
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
+	
+	@GetMapping("/logout/{username}")
+	public ResponseEntity<?> logout(@PathVariable String username) {
+		String result;
+		
+		Map<String, Object> response = new HashMap<>();
+		
+		// Validar si hay un error de parte de la base de datos
+		try {
+			result = service.logout(username);
+		} catch (DataAccessException e) {
+			response.put("mensaje", "Por favor contacte al administrador");
+			response.put("error", Objects.requireNonNull(e.getMessage()));
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		if (result.equals("")) {
+			response.put("mensaje", "Credenciales inválidas");
+			response.put("error", "El usuario".concat(username).concat("no está registrado"));
+			return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+		}
+		
+		if (result.equals("Inactivo")) {
+			response.put("mensaje", "Solicitud denegada");
+			response.put("error", "El usuario no tiene una sesión activa");
+			return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+		}
+
+		response.put("mensaje", "Saliendo");
+		response.put("token", result);
+
+		return new ResponseEntity<>(response, HttpStatus.CREATED);
+	}
 }

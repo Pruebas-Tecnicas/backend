@@ -33,7 +33,8 @@ public class UsuarioService implements IUsuarioService {
 		Usuario usuarioDb = dao.findByUsername(username);
 		String passDb = null;
 		
-		if (usuarioDb == null) { // Valida que el usuario exista en la base de datos
+		// Valida que el usuario exista en la base de datos
+		if (usuarioDb == null) { 
 			return "";
 		}
 		
@@ -43,20 +44,45 @@ public class UsuarioService implements IUsuarioService {
 			e.printStackTrace();
 		}
 		
-		if (!password.equals(passDb)) { // Valida que la contraseña sea correcta 
+		// Valida que la contraseña sea correcta
+		if (!password.equals(passDb)) {  
 			return "";
 		}
 		
-		if (usuarioDb.getToken().length() > 0) { // Valida que el usuario no tenga ya un token
+		// Valida que el usuario no tenga un token
+		if (usuarioDb.getToken().length() > 0) { 
 			return "Activo";
 		}
 		
+		// Colocar token y guardar
 		String result = java.util.UUID.randomUUID().toString().replaceAll("-", "").substring(0, 32);
 		usuarioDb.setToken(result);
 		
 		Usuario usuarioWithToken = dao.save(usuarioDb);		
 		
 	    return usuarioWithToken.getToken();
+	}
+
+	@Override
+	@Transactional
+	public String logout(String username) {
+		Usuario usuarioDb = dao.findByUsername(username);
+		
+		// Valida que el usuario exista en la base de datos
+		if (usuarioDb == null) { 
+			return "";
+		}
+		
+		// Valida que el usuario tenga un token
+		if (usuarioDb.getToken().length() == 0) { 
+			return "Inactivo";
+		}
+		
+		// Quitar token y guardar
+		usuarioDb.setToken("");
+		dao.save(usuarioDb);		
+		
+	    return "Su sesión fue cerrada con éxito";
 	}
 	
 }
