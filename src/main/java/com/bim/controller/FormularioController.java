@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import com.bim.service.IFormularioService;
 import dto.Formulario;
 import jakarta.validation.Valid;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/formulario")
 public class FormularioController {
@@ -54,9 +56,13 @@ public class FormularioController {
 			captura = service.save(formulario);
 		} catch (DataAccessException e) {
 			response.put("mensaje", "Error al guardar los datos");
-			response.put("error", Objects.requireNonNull(e.getMessage()).concat(" : ").concat(e.getMostSpecificCause().getMessage()));
-
+			response.put("error", Objects.requireNonNull(e.getMessage()));
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			
+		} catch (NullPointerException e) {
+			response.put("mensaje", "Error al guardar los datos");
+			response.put("error", Objects.requireNonNull(e.getMessage()));
+			return new ResponseEntity<>(response, HttpStatus.CONFLICT);
 		}
 
 		response.put("mensaje", "Los datos han sido guardados con éxito");

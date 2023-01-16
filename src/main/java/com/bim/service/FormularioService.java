@@ -69,7 +69,7 @@ public class FormularioService implements IFormularioService {
 		}
 		
 		if (!flag) {
-			return null;
+			throw new NullPointerException("Todos los datos que se intentan guardar ya existen en la base de datos");
 		}
 		
 		Formulario captura = new Formulario();

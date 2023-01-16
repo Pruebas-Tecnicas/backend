@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 
 public class Formulario {
 	
-	@Size(max = 30, message = "El estado puede contener máximo 30 caracteres")
+	@Pattern(regexp = "[a-zA-Z ]{1,30}", message = "El estado solo puede contener letras y espacios, además permite un máximo de 30")
 	@NotBlank(message = "El estado está vacío")
 	private String estado;
 	
