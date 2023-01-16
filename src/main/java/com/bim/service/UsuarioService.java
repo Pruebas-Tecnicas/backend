@@ -1,5 +1,8 @@
 package com.bim.service;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Base64;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,12 +31,19 @@ public class UsuarioService implements IUsuarioService {
 	public String login(String username, String password) {
 		
 		Usuario usuarioDb = dao.findByUsername(username);
+		String passDb = null;
 		
 		if (usuarioDb == null) { // Valida que el usuario exista en la base de datos
 			return "";
 		}
 		
-		if (!password.equals(usuarioDb.getPassword())) { // Valida que la contraseña sea correcta 
+		try {
+			passDb = new String(Base64.getDecoder().decode(usuarioDb.getPassword()), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		
+		if (!password.equals(passDb)) { // Valida que la contraseña sea correcta 
 			return "";
 		}
 		

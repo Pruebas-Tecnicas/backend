@@ -28,7 +28,7 @@ public class Usuario {
 	private String email;
 
 	@NotBlank(message = "La contraseña está vacía")
-	@Size(min = 8, max = 60, message = "La contraseña debe contener entre 8 y 60 caracteres.")
+	@Size(min = 12, max = 56, message = "La contraseña debe contener entre 8 y 60 caracteres.")
 	@Column(name = "contrasena")
 	private String password;
 	
